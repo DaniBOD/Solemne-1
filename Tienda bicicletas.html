@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tienda de Bicicletas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .categoria {
+      margin-bottom: 40px;
+    }
+
+    .productos, .carrito {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .producto, .item-carrito {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .producto img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 6px 12px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .carrito-total {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    #mensaje {
+      text-align: center;
+      font-weight: bold;
+      color: green;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tienda de Bicicletas</h1>
+
+  <!-- Menú de Productos -->
+  <div class="categoria">
+    <h2>Bicicletas Urbanas</h2>
+    <div class="productos">
+      <div class="producto">
+        <img src="https://www.sanferbike.com/videostv/wp-content/uploads/2020/05/LIV-Flourish-2.jpg" alt="Urbana Eco">
+        <h3>Urbana Eco</h3>
+        <p>Ligera, cómoda y perfecta para la ciudad.</p>
+        <p><strong>$250.000</strong></p>
+        <button onclick="agregarAlCarrito('Urbana Eco', 250000)">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="https://ciclosfera.com/img/53b3602f6f64863b6a28b60285c6f444.872.0.0.0.699b2d9d.webp" alt="City Ride">
+        <h3>City Ride</h3>
+        <p>Diseño moderno y eficiente.</p>
+        <p><strong>$320.000</strong></p>
+        <button onclick="agregarAlCarrito('City Ride', 320000)">Agregar al carrito</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="categoria">
+    <h2>Bicicletas de Montaña</h2>
+    <div class="productos">
+      <div class="producto">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2knA7ZYVpfYKlmx1mP22FYj6eZVOb0GK9vw&s" alt="Montaña Pro">
+        <h3>Montaña Pro</h3>
+        <p>Ideal para terrenos extremos.</p>
+        <p><strong>$450.000</strong></p>
+        <button onclick="agregarAlCarrito('Montaña Pro', 450000)">Agregar al carrito</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="categoria">
+    <h2>Accesorios</h2>
+    <div class="productos">
+      <div class="producto">
+        <img src="https://contents.mediadecathlon.com/p2838941/k$422d1b326b534a55dd84533d4c378512/casco-ciclismo-btt-st-500-rojo.jpg?format=auto&quality=40&f=800x800" alt="Casco Seguro">
+        <h3>Casco Seguro</h3>
+        <p>Protección certificada y elegante.</p>
+        <p><strong>$45.000</strong></p>
+        <button onclick="agregarAlCarrito('Casco Seguro', 45000)">Agregar al carrito</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carrito -->
+  <h2>Carrito de Compras</h2>
+  <div class="carrito" id="carrito"></div>
+  <div class="carrito-total">Total: $<span id="total">0</span></div>
+
+  <!-- Formulario de Pago -->
+  <h2>Pago Electrónico</h2>
+  <form onsubmit="procesarPago(event)">
+    <label>Nombre:</label>
+    <input type="text" required>
+    <label>Número de Tarjeta:</label>
+    <input type="text" maxlength="16" required>
+    <label>Fecha de Vencimiento:</label>
+    <input type="month" required>
+    <label>CVV:</label>
+    <input type="text" maxlength="3" required>
+    <button type="submit">Pagar</button>
+  </form>
+
+  <div id="mensaje"></div>
+
+  <script>
+    const carrito = [];
+    let total = 0;
+
+    function agregarAlCarrito(nombre, precio) {
+      carrito.push({ nombre, precio });
+      total += precio;
+      actualizarCarrito();
+    }
+
+    function eliminarProducto(index) {
+      total -= carrito[index].precio;
+      carrito.splice(index, 1);
+      actualizarCarrito();
+    }
+
+    function actualizarCarrito() {
+      const contenedor = document.getElementById('carrito');
+      contenedor.innerHTML = '';
+      carrito.forEach((producto, index) => {
+        const item = document.createElement('div');
+        item.className = 'item-carrito';
+        item.innerHTML = `
+          <p><strong>${producto.nombre}</strong></p>
+          <p>$${producto.precio}</p>
+          <button onclick="eliminarProducto(${index})">Eliminar</button>
+        `;
+        contenedor.appendChild(item);
+      });
+      document.getElementById('total').innerText = total;
+    }
+
+    function procesarPago(event) {
+      event.preventDefault();
+      if (carrito.length === 0) {
+        alert("Agrega productos antes de realizar el pago.");
+        return;
+      }
+      document.getElementById('mensaje').innerText = "✅ ¡Pago realizado con éxito!";
+      carrito.length = 0;
+      total = 0;
+      actualizarCarrito();
+      event.target.reset();
+    }
+  </script>
+</body>
+</html>
