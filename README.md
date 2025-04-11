@@ -31,7 +31,7 @@ FROM httpd:2.4
 # Instala git
 RUN apt-get update && apt-get install -y git
 
-# Clona tu repositorio con la página HTML
+# Clona el repositorio con la página HTML
 RUN rm -rf /usr/local/apache2/htdocs/*
 RUN git clone https://github.com/DaniBOD/Solemne-1.git /usr/local/apache2/htdocs/
 
